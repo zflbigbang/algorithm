@@ -15,6 +15,43 @@ func main() {
 
 }
 
+func buildTree(inorder []int, postorder []int) *TreeNode {
+	if len(inorder) == 0 || len(postorder) == 0 {
+		return nil
+	}
+	tmp := postorder[len(postorder)]
+	root := &TreeNode{Val: tmp}
+	if len(postorder) == 1 {
+		return root
+	}
+	//寻找切割点
+	index := 0
+	for ; index < len(postorder); index++ {
+		if inorder[index] == tmp {
+			break
+		}
+	}
+	//切割前序数组
+	inorderLeft := inorder[:index]
+	inorderRight := inorder[index+1:]
+	//切割后序数组
+	postorderLeft := postorder[:index]
+	postorderRight := postorder[:len(postorder)-1]
+	root.Left = buildTree(inorderLeft, postorderLeft)
+	root.Right = buildTree(inorderRight, postorderRight)
+	return root
+}
+
+func hasPathSum(root *TreeNode, targetSum int) bool {
+	if root == nil {
+		return false
+	}
+	if root.Left == nil && root.Right == nil && targetSum == root.Val {
+		return true
+	}
+	return hasPathSum(root.Left, targetSum-root.Val) || hasPathSum(root.Right, targetSum-root.Val)
+}
+
 var rs int
 var maxD int
 

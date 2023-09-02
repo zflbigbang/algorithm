@@ -38,6 +38,7 @@ func (h IHeap) Len() int {
 	return len(h)
 }
 
+// 最小堆
 func (h IHeap) Less(i, j int) bool {
 	return h[i][1] < h[j][1]
 }
