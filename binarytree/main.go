@@ -2,6 +2,7 @@ package main
 
 import (
 	"container/list"
+	"math"
 	"strconv"
 )
 
@@ -14,7 +15,245 @@ type TreeNode struct {
 func main() {
 
 }
+func convertBST(root *TreeNode) *TreeNode {
+	pre := 0
+	var travel func(root *TreeNode) *TreeNode
+	travel = func(root *TreeNode) *TreeNode {
+		if root == nil {
+			return nil
+		}
+		root.Right = travel(root.Right)
+		root.Val += pre
+		pre = root.Val
+		root.Left = travel(root.Left)
+		return root
+	}
+	return travel(root)
+}
 
+func sortedArrayToBST(nums []int) *TreeNode {
+	var travel func(left int, right int) *TreeNode
+	travel = func(left int, right int) *TreeNode {
+		if left > right {
+			return nil
+		}
+		mid := (right-left)/2 + left
+		root := &TreeNode{Val: nums[mid]}
+		root.Left = travel(left, mid-1)
+		root.Right = travel(mid+1, right)
+		return root
+	}
+	return travel(0, len(nums)-1)
+}
+
+func trimBST(root *TreeNode, low int, high int) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	if root.Val < low {
+		return trimBST(root.Right, low, high)
+	}
+	if root.Val > high {
+		return trimBST(root.Left, low, high)
+	}
+	root.Left = trimBST(root.Left, low, high)
+	root.Right = trimBST(root.Right, low, high)
+	return root
+}
+func deleteNode(root *TreeNode, key int) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	if root.Val == key {
+		if root.Left != nil && root.Right == nil {
+			return root.Left
+		} else if root.Right != nil && root.Left == nil {
+			return root.Right
+		} else if root.Right == nil && root.Left == nil {
+			return nil
+		} else {
+			cur := root.Right
+			for cur.Left != nil {
+				cur = cur.Left
+			}
+			cur.Left = root.Left
+			return root.Right
+		}
+	} else if root.Val < key {
+		root.Right = deleteNode(root.Right, key)
+	} else {
+		root.Left = deleteNode(root.Left, key)
+	}
+	return root
+}
+func insertIntoBST(root *TreeNode, val int) *TreeNode {
+	if root == nil {
+		return &TreeNode{Val: val}
+	}
+	if root.Val > val {
+		root.Left = insertIntoBST(root.Left, val)
+	}
+	if root.Val < val {
+		root.Right = insertIntoBST(root.Right, val)
+	}
+	return root
+}
+func lowestCommonAncestorMin(root, p, q *TreeNode) *TreeNode {
+	var leftNode *TreeNode
+	var rightNode *TreeNode
+	var travel func(root *TreeNode) *TreeNode
+	travel = func(root *TreeNode) *TreeNode {
+		if root == nil {
+			return nil
+		}
+		if root.Val > p.Val && root.Val > q.Val {
+			leftNode = travel(root.Left)
+		}
+		if root.Val < p.Val && root.Val < q.Val {
+			rightNode = travel(root.Right)
+		}
+		if leftNode != nil {
+			return leftNode
+		}
+		if rightNode != nil {
+			return rightNode
+		}
+		return root
+	}
+	return travel(root)
+}
+func findMode(root *TreeNode) []int {
+	array := make([]int, 0)
+	maxCnt := 0
+	cnt := 0
+	var pre *TreeNode
+	var travel func(root *TreeNode)
+	travel = func(root *TreeNode) {
+		if root == nil {
+			return
+		}
+		travel(root.Left)
+		if pre != nil && pre.Val == root.Val {
+			cnt++
+		} else {
+			cnt = 1
+		}
+		pre = root
+		if cnt == maxCnt {
+			array = append(array, root.Val)
+		} else if cnt > maxCnt {
+			maxCnt = cnt
+			array = []int{}
+			array = append(array, root.Val)
+		}
+		travel(root.Right)
+	}
+	travel(root)
+	return array
+}
+func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
+	if root == nil || root.Val == p.Val || root.Val == q.Val {
+		return root
+	}
+	leftNode := lowestCommonAncestor(root.Left, p, q)
+	rightNode := lowestCommonAncestor(root.Right, p, q)
+	if leftNode != nil && rightNode != nil {
+		return root
+	} else if leftNode != nil && rightNode == nil {
+		return leftNode
+	} else if leftNode == nil && rightNode != nil {
+		return rightNode
+	}
+	return nil
+}
+func getMinimumDifference(root *TreeNode) int {
+	minRs := math.MaxInt
+	var pre *TreeNode
+	var travel func(root *TreeNode)
+	travel = func(root *TreeNode) {
+		if root == nil {
+			return
+		}
+		travel(root.Left)
+		if pre != nil && root.Val-pre.Val < minRs {
+			minRs = root.Val - pre.Val
+		}
+		pre = root
+		travel(root.Right)
+	}
+	travel(root)
+	return minRs
+}
+func isValidBST(root *TreeNode) bool {
+	var pre *TreeNode
+	var travel func(root *TreeNode) bool
+	travel = func(root *TreeNode) bool {
+		if root == nil {
+			return true
+		}
+		leftFlag := travel(root.Left)
+		if pre != nil && pre.Val > root.Val {
+			return false
+		}
+		pre = root
+		rightFlag := travel(root.Right)
+		return leftFlag && rightFlag
+	}
+	return travel(root)
+}
+func searchBST(root *TreeNode, val int) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	if root.Val == val {
+		return root
+	} else if val > root.Val {
+		return searchBST(root.Right, val)
+	} else {
+		return searchBST(root.Left, val)
+	}
+}
+func mergeTrees(root1 *TreeNode, root2 *TreeNode) *TreeNode {
+	if root1 == nil {
+		return root2
+	}
+	if root2 == nil {
+		return root1
+	}
+	root1.Val += root2.Val
+	root1.Left = mergeTrees(root1.Left, root2.Left)
+	root1.Right = mergeTrees(root1.Right, root2.Right)
+	return root1
+}
+func findMax(nums []int) (index int) {
+	maxTmp := 0
+	for i, num := range nums {
+		if num > maxTmp {
+			maxTmp = num
+			index = i
+		}
+	}
+	return
+}
+func constructMaximumBinaryTree(nums []int) *TreeNode {
+	//终止条件
+	if len(nums) == 1 {
+		root := &TreeNode{Val: nums[0]}
+		return root
+	}
+	//寻找最大值下标
+	index := findMax(nums)
+	root := &TreeNode{Val: nums[index]}
+	//单层递归逻辑
+	//向左切割数组并递归
+	if index > 0 {
+		root.Left = constructMaximumBinaryTree(nums[:index])
+	}
+	if index < len(nums)-1 {
+		root.Right = constructMaximumBinaryTree(nums[index+1:])
+	}
+	return root
+}
 func buildTree(inorder []int, postorder []int) *TreeNode {
 	if len(inorder) == 0 || len(postorder) == 0 {
 		return nil
