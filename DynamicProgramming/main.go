@@ -11,7 +11,7 @@ type TreeNode struct {
 }
 
 func main() {
-	largestRectangleArea([]int{2, 4})
+
 }
 
 func min(a int, b int) int {
