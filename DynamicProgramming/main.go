@@ -11,7 +11,7 @@ type TreeNode struct {
 }
 
 func main() {
-
+	min(1, 2)
 }
 
 func min(a int, b int) int {
