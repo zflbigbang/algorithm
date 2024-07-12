@@ -11,9 +11,45 @@ type TreeNode struct {
 }
 
 func main() {
-
+	dp := [][]int{{-2, -3, 3}, {-5, -10, 1}, {10, 30, -5}}
+	calculateMinimumHP(dp)
 }
-
+func calculateMinimumHP(dungeon [][]int) int {
+	n := len(dungeon) - 1
+	m := len(dungeon[0]) - 1
+	if dungeon[n][m] > 0 {
+		dungeon[n][m] = 0
+	}
+	// 初始化赋值
+	// 1 最右边
+	for i := n - 1; i >= 0; i-- {
+		if dungeon[i+1][m]+dungeon[i][m] > 0 {
+			dungeon[i][m] = 0
+		} else {
+			dungeon[i][m] = dungeon[i+1][m] + dungeon[i][m]
+		}
+	}
+	// 2 最下边
+	for i := m - 1; i >= 0; i-- {
+		if dungeon[n][i+1]+dungeon[n][i] > 0 {
+			dungeon[n][i] = 0
+		} else {
+			dungeon[n][i] = dungeon[n][i+1] + dungeon[n][i]
+		}
+	}
+	// 开始递推
+	for i := n - 1; i >= 0; i-- {
+		for j := m - 1; j >= 0; j-- {
+			threat := max(dungeon[i+1][j], dungeon[i][j+1])
+			if threat+dungeon[i][j] > 0 {
+				dungeon[i][j] = 0
+			} else {
+				dungeon[i][j] = threat + dungeon[i][j]
+			}
+		}
+	}
+	return -dungeon[0][0] + 1
+}
 func min(a int, b int) int {
 	if a < b {
 		return a

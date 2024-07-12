@@ -5,7 +5,23 @@ import (
 )
 
 func main() {
-	generateMatrix(2)
+
+}
+
+func countPrimes(n int) (cnt int) {
+	isPrime := make(map[int]bool, n)
+	for i := range isPrime {
+		isPrime[i] = true
+	}
+	for i := 2; i < n; i++ {
+		if isPrime[i] {
+			cnt++
+			for j := 2; j*i < n; j++ {
+				isPrime[j*i] = false
+			}
+		}
+	}
+	return
 }
 
 func spiralOrder(matrix [][]int) []int {
