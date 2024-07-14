@@ -3,6 +3,31 @@ package main
 func main() {
 	largestIsland([][]int{{1, 1}, {1, 1}})
 }
+
+func findCircleNum(isConnected [][]int) int {
+	cnt := 0
+	n := len(isConnected)
+	visited := make([]bool, n)
+	var dfs func(cur int)
+	dfs = func(cur int) {
+		visited[cur] = true
+		for to, conn := range isConnected[cur] {
+			if conn == 1 && !visited[to] {
+				dfs(to)
+			}
+		}
+	}
+	for i, v := range visited {
+		if !v {
+			cnt++
+			dfs(i)
+		}
+	}
+
+	return cnt
+
+}
+
 func largestIsland(grid [][]int) int {
 	n := len(grid)
 	m := len(grid[0])
@@ -15,8 +40,8 @@ func largestIsland(grid [][]int) int {
 		visited[i] = make([]bool, m)
 	}
 	markArea := make(map[int]int, 0)
-	var dfs func(x int, y int, visited [][]bool)
-	dfs = func(x int, y int, visited [][]bool) {
+	var dfs func(x int, y int)
+	dfs = func(x int, y int) {
 		if visited[x][y] || grid[x][y] == 0 {
 			return
 		}
@@ -29,7 +54,7 @@ func largestIsland(grid [][]int) int {
 			if nextx < 0 || nextx >= n || nexty < 0 || nexty >= m {
 				continue
 			}
-			dfs(nextx, nexty, visited)
+			dfs(nextx, nexty)
 		}
 	}
 	isAllgrid := true
@@ -40,7 +65,7 @@ func largestIsland(grid [][]int) int {
 			}
 			if !visited[i][j] && grid[i][j] == 1 {
 				cnt = 0
-				dfs(i, j, visited)
+				dfs(i, j)
 				markArea[mark] = cnt
 				mark++
 			}

@@ -9,15 +9,16 @@ func main() {
 }
 
 func countPrimes(n int) (cnt int) {
-	isPrime := make(map[int]bool, n)
-	for i := range isPrime {
+	// 初始化切片，长度为n，所有元素默认为true
+	isPrime := make([]bool, n)
+	for i := 2; i < n; i++ {
 		isPrime[i] = true
 	}
 	for i := 2; i < n; i++ {
 		if isPrime[i] {
 			cnt++
-			for j := 2; j*i < n; j++ {
-				isPrime[j*i] = false
+			for j := i * i; j < n; j += i {
+				isPrime[j] = false
 			}
 		}
 	}
