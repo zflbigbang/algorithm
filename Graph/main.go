@@ -1,8 +1,8 @@
 package main
 
-func main() {
-	largestIsland([][]int{{1, 1}, {1, 1}})
-}
+//func main() {
+//	largestIsland([][]int{{1, 1}, {1, 1}})
+//}
 
 func findCircleNum(isConnected [][]int) int {
 	cnt := 0
