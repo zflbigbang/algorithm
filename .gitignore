@@ -1,1 +1,8 @@
-*.mod
+.DS_Store
+.vscode
+**/*.tar
+.idea
+build
+proto-gen
+etc
+!/cmd/**/etc
